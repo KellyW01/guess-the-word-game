@@ -7,7 +7,8 @@ const wordInProgress = document.querySelector(".word-in-progress");//hidden word
 //number of guesses remaining
 const guessCount = document.querySelector(".remaining span"); // sentence w/ number of remaining guesses
 //list of guessed letters not in the word
-const guessedLetters = document.querySelector(".guessed-letters");
+const guessedLettersElement = document.querySelector(".guessed-letters");
+const guessedLetters = [];
 //box where user can type thier letter guess
 const guessInput = document.querySelector(".guess-form input"); 
 //button to click to enter letter
@@ -15,20 +16,18 @@ const guessButton = document.querySelector(".guess");
 //button to play again
 const playAgain = document.querySelector("button.pay-again"); 
 
-let word = "magnolia"; // using to test code.  Will need to update to API
+const word = "magnolia"; // using to test code.  Will need to update to API
 
 //split a string into substrings and 
     //return these elements as an array - break the word down to letters
-const wordArray = word.split("");
 
-const wordToGuess = function (word) { //function to add placeholders for each lette
-    // const length = Number(word.length);
-    //add 'word' to 'wordInProgress' element
+//function to add placeholders for each letter
+const wordToGuess = function () { 
+    const wordArray = word.split("");
     wordInProgress.innerText = wordArray.fill("●");
-    
-    // const placeholder = ["●"];
-    //for each letter of word, replace letter with 0
-// wordArray.splice(0,length,placeholder);
+    //forEach(letter of wordArray){ 
+        //placeholder array push("●")
+    //}
 };
 
 wordToGuess(word); //calls function
@@ -71,5 +70,5 @@ const addToList = function (usersGuess){
     const listItem = document.createElement("li"); //creates a list item
     listItem.innerText = usersGuess; //adds guess to list
     //adds guess to list if in the word?
-    guessedLetters.append(listItem);
+    guessedLettersElement.append(listItem);
 }
