@@ -18,7 +18,7 @@ const playAgain = document.querySelector("button.pay-again");
 const word = "magnolia"; // using to test code.  Will need to update to API
 const wordInProgressElement = document.querySelector(".word-in-progress");//hidden word, appears w/ correct guesses
 let wordInProgress = []; //array to hold circles and correct letters
-const revealWord = [];
+
 const guessedLettersElement = document.querySelector(".guessed-letters"); //display of all guessed letters
 const guessedLetters = []; //array for all guesses - correct and incorrect.
 
@@ -49,7 +49,10 @@ guessButton.addEventListener("click", function (e) {
     const usersGuess = letterInput.value.toUpperCase();//captures user's input & capitalizes it
     const validGuess = validateGuess(usersGuess) //call function w/ input as argument, save the result as variable
     makeGuess(validGuess); //prevents same letter twice
-    updateWordInProgress(usersGuess);
+    updateWordInProgress(guessedLetters);
+    // updateWordInProgress(usersGuess);
+    // updateWordInProgress(guessedLetters, wordArray);
+    // updateWordInProgress(usersGuess);
     
     clearInput(); //clears letter input box
 });
@@ -92,9 +95,77 @@ const makeGuess = function (letter) {
     
 };
 //function to replace circle symbols w/ the correct letters guessed
-const updateWordInProgress = function (usersGuess){
+//1. the letters of the word being guessed are looped over and in each loop the players guess is compared to the letter in the word being guessed.
+//if the letter guessed is included in the word being guessed the letter is pushed to the array.
+//if not a circle symbol is pushed to the reveal word array
+//then that array becomes the inner text of the variable word in progreess - replacing the dots added when the site was loaded.
 
-    //*** this doesn't work.  reveal word is all m's and doesn't show up in the wordInProgressElement */
+
+//*** doubles each time.  with guess "A" its an array of 8 that includes two A's.  Second guess M, starts with M but now has 16 characters: *A*****AM******* third guess adds another 8 characterss.  Reveal word is doubling. tried adding return revealWord, code wouldn't run.  Tried making reveal word's scope local instead of global and it stops doubling but forgets which letter was guessed first.  So A = *A*****A* and then you enter 'm' and its m******* instead of combining them  --- I'm so close!!*/
+
+// const updateWordInProgress = function (usersGuess){
+//     const revealWord = [];
+//     for (letter of wordArray){
+//         if (letter === usersGuess){
+//             revealWord.push(usersGuess);
+//            } else {
+//             revealWord.push("●");
+//             }};
+        
+//         wordInProgress =revealWord;
+//         console.log({revealWord});
+//     wordInProgressElement.innerText = wordInProgress.join('');
+    
+ //   };
+//**********only works the first time ... needs to account for more than one correct guess*********
+const updateWordInProgress = function (guessedLetters){
+    const revealWord = [];
+    for (var letter of wordArray){ 
+        if (letter == guessedLetters){ 
+            revealWord.push(letter);
+           } else {
+            revealWord.push("●");
+            }};
+        
+    wordInProgress =revealWord;
+    console.log({revealWord});
+    wordInProgressElement.innerText = wordInProgress.join('');
+    return revealWord;
+    };
+
+// **** same thing, only works the first time***
+// const updateWordInProgress = function (guessedLetters){
+//     const revealWord = [];
+//     wordArray.forEach(function(letter, index) {
+//         if (letter == guessedLetters){
+//             revealWord.push(letter);
+//         }else {
+//             revealWord.push("●")
+//         };
+//         wordInProgress = revealWord;
+//         console.log({revealWord});
+        
+//     });
+//     wordInProgressElement.innerText = wordInProgress.join('');
+// }
+
+
+    //****   doubles revealWord - two guesses is 16 characters*/
+// const updateWordInProgress = function (usersGuess){
+//     wordArray.forEach(function(letter,index){
+//         if (letter === usersGuess){ 
+//             revealWord.push(usersGuess);
+//         } else {
+//             revealWord.push("●")
+//             console.log({revealWord})
+//         };
+//         wordInProgress = revealWord;
+//     });
+//     wordInProgressElement.innerText = wordInProgress.join(''); 
+// };
+
+//*** this doesn't work.  reveal word is all m's and doesn't show up in the wordInProgressElement */
+// const updateWordInProgress = function (usersGuess){
     // for (letter of wordArray){
     // if (wordArray.includes(usersGuess)){
     //     revealWord.push(usersGuess);
@@ -103,35 +174,42 @@ const updateWordInProgress = function (usersGuess){
     //     wordInProgress = revealWord;
     // }}
 
-//*** doubles each time.  with guess "A" its an array of 8 that includes two A's.  Second guess M, starts with M but now has 16 characters: *A*****AM******* third guess adds another 8 characterss.  Reveal word is doubling. */
-
-    // for (letter of wordArray){
-    //     if (letter === usersGuess){
-    //         revealWord.push(usersGuess);
-    //     } else {
-    //         revealWord.push("●");
-    //         wordInProgress =revealWord;
-    //     }};
-        
-    //     console.log({revealWord});
-    // wordInProgressElement.innerText = wordInProgress.join('');
-    // };
-
-    //****   */
-    wordArray.forEach(function(letter,index){
-        if (letter === usersGuess){ 
-            revealWord.push(usersGuess);
-        } else {
-            revealWord.push("●")
-            console.log({revealWord})
-        };
-        wordInProgress = revealWord;
-    });
-    wordInProgressElement.innerText = wordInProgress.join(''); 
-};
-    //     //2.update circle symbol w/ correct letter in wordInProgress array
+//****** Doesn't work yet.  word in progress element changes to a single * and M is not recognized as a correct guess ****/
  
+// const updateWordInProgress = function (guessedLetters){
+//     if (wordArray.includes(guessedLetters)){
+//         revealWord.push(guessedLetters);
+//     }else{
+//         revealWord.push("●");
+//         console.log({revealWord});
+//     }
+//     wordInProgress = revealWord;
+//     wordInProgressElement.innerText = wordInProgress.join('');
+// };
+//********* doesnt work, 8 different arrays but doesn't find A as a letter in the wordArray */
+// const updateWordInProgress = function (guessedLetters){
+//     wordArray.forEach(function(letter,index){
+//             if (letter === guessedLetters){ 
+//                 revealWord.push(guessedLetters);
+//             } else {
+//                 revealWord.push("●")
+//                 console.log({revealWord})
+//             };
+//             wordInProgress = revealWord;
+//             wordInProgressElement.innerText = wordInProgress.join(''); 
+//         });
+//     };
 
+//** doesnt work, same reason as above */
+// function updateWordInProgress(guessedLetters, wordArray){
+//     if (wordArray.includes(guessedLetters)){
+//         revealWord.push(guessedLetters)
+//     }else{
+//         revealWord.push("*");
+//         console.log({revealWord})
+//         return revealWord;
+//     }
+//     wordInProgressElement.innerText = wordInProgress.join('');}
 
 
 
@@ -153,23 +231,3 @@ const updateWordInProgress = function (usersGuess){
 //         clearInput();
 //     }
 // });
-//function to replace circle symbols with correct guessed letter
-//const correctGuess = function (guessedLetters) {
-    //wordToGuess();? to have those variables recognized in this function? or pass this function in wordToGuess?
-    
-    //if (wordArray.includes(guessedLetters)) {
-      //  wordInPogress.push(guessedLetters);//add the guessed letter to the word in progress array
-       // wordInPogress.concat(placeholder)//join word in progress array with symbols array - how to get them in the right place?
-   // }
-//};
-
-
-//};
-//update guess count
-// const updateGuessCount = function(){
-//     const guesses = document.querySelectorAll(".guessed-letters li");
-//     guessCount.innerText = Number(8-(guesses.length));
-//     if (guesses.length === 8){
-        //guesses are used regardless of correct or incorrect guess
-        //message, you've used up your guesses
-//   
