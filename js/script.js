@@ -17,7 +17,7 @@ const playAgain = document.querySelector("button.pay-again");
 
 const word = "magnolia"; // using to test code.  Will need to update to API
 const wordInProgressElement = document.querySelector(".word-in-progress");//hidden word, appears w/ correct guesses
-const wordInProgress = []; //array to hold circles
+let wordInProgress = []; //array to hold circles and correct letters
 const revealWord = [];
 const guessedLettersElement = document.querySelector(".guessed-letters"); //display of all guessed letters
 const guessedLetters = []; //array for all guesses - correct and incorrect.
@@ -93,44 +93,66 @@ const makeGuess = function (letter) {
 };
 //function to replace circle symbols w/ the correct letters guessed
 const updateWordInProgress = function (usersGuess){
-    
+
+    //*** this doesn't work.  reveal word is all m's and doesn't show up in the wordInProgressElement */
+    // for (letter of wordArray){
+    // if (wordArray.includes(usersGuess)){
+    //     revealWord.push(usersGuess);
+    // } else {
+    //     revealWord.push("●");
+    //     wordInProgress = revealWord;
+    // }}
+
+//*** doubles each time.  with guess "A" its an array of 8 that includes two A's.  Second guess M, starts with M but now has 16 characters: *A*****AM******* third guess adds another 8 characterss.  Reveal word is doubling. */
+
+    // for (letter of wordArray){
+    //     if (letter === usersGuess){
+    //         revealWord.push(usersGuess);
+    //     } else {
+    //         revealWord.push("●");
+    //         wordInProgress =revealWord;
+    //     }};
+        
+    //     console.log({revealWord});
+    // wordInProgressElement.innerText = wordInProgress.join('');
+    // };
+
+    //****   */
     wordArray.forEach(function(letter,index){
-        if (letter === usersGuess){ //1.check if word array contains any letters from the guessedLetters Array
+        if (letter === usersGuess){ 
             revealWord.push(usersGuess);
         } else {
             revealWord.push("●")
+            console.log({revealWord})
         };
-        
+        wordInProgress = revealWord;
     });
-    
-    
-    wordInProgressElement.innerText = revealWord.join(''); 
-        //2.update circle symbol w/ correct letter in wordInProgress array
-        console.log("guessed right", {revealWord});
-        
+    wordInProgressElement.innerText = wordInProgress.join(''); 
 };
-      
+    //     //2.update circle symbol w/ correct letter in wordInProgress array
+ 
+
 
 
 
 
 //if user presses enter instead of button
-letterInput.addEventListener("keydown", function (e) {
-    const usersGuess = letterInput.value.toUpperCase();
-    if (e.key === "Enter") {//if user presses the enter key
-        e.preventDefault();
-        message.innerText = ''; //empty text of message element - must be before goodGuess for goodGuess to work
-        const usersGuess = letterInput.value.toUpperCase();//captures user's input
-        const validGuess = validateGuess(usersGuess) //call function w/ input as argument, save the result as variable
-        if (validGuess) {
-            makeGuess(usersGuess);//if it passes validateGuess add to screen and guessedLetters array 
-            //correctGuess(usersGuess);
-            console.log(usersGuess);
-        }
+// letterInput.addEventListener("keydown", function (e) {
+//     const usersGuess = letterInput.value.toUpperCase();
+//     if (e.key === "Enter") {//if user presses the enter key
+//         e.preventDefault();
+//         message.innerText = ''; //empty text of message element - must be before goodGuess for goodGuess to work
+//         const usersGuess = letterInput.value.toUpperCase();//captures user's input
+//         const validGuess = validateGuess(usersGuess) //call function w/ input as argument, save the result as variable
+//         if (validGuess) {
+//             makeGuess(usersGuess);//if it passes validateGuess add to screen and guessedLetters array 
+//             //correctGuess(usersGuess);
+//             console.log(usersGuess);
+//         }
 
-        clearInput();
-    }
-});
+//         clearInput();
+//     }
+// });
 //function to replace circle symbols with correct guessed letter
 //const correctGuess = function (guessedLetters) {
     //wordToGuess();? to have those variables recognized in this function? or pass this function in wordToGuess?
@@ -150,5 +172,4 @@ letterInput.addEventListener("keydown", function (e) {
 //     if (guesses.length === 8){
         //guesses are used regardless of correct or incorrect guess
         //message, you've used up your guesses
-//     }
-
+//   
