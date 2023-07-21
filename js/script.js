@@ -1,74 +1,67 @@
 
                          //*** GLOBAL VARIABLES ***//
-//*** GAME MESSAGE ***/
-const message = document.querySelector(".message"); //game says good guess or sorry letter not included
-
-//*** NUMBER OF GUESSES REMAINING ELEMENT ***/
-const guessCount = document.querySelector(".remaining span"); // sentence w/ number of remaining guesses
-
-//** INPUT ELEMENT FOR GUESSING LETTERS ***/
-const letterInput = document.querySelector(".letter");
-
-// *** GUESS BUTTON  ***/
-const guessButton = document.querySelector(".guess");
-
-//*** PLAY AGAIN BUTTON ***/
-const playAgain = document.querySelector("button.pay-again");
-
-//TEST CODE WORD//
-const word = "magnolia"; // using to test code.  Will need to update to API
-
-// *** WORD IN PROGRESS ELEMENT & ARRAY*** /
+const guessedLettersElement = document.querySelector(".guessed-letters"); //shows guesssed letters
+const guessButton = document.querySelector(".guess"); //guess button
+const letterInput = document.querySelector(".letter");// where the player enters the letter
 const wordInProgressElement = document.querySelector(".word-in-progress");//hidden word, appears w/ correct guesses
-let wordInProgress = []; //array to hold circles and correct letters
+const guessCount = document.querySelector(".remaining span"); // sentence w/ number of remaining guesses
+const message = document.querySelector(".message"); //game message
+const playAgain = document.querySelector("button.play-again");
 
-// *** GUESSED LETTERS DISPLAY & ARRAY *** /
-const guessedLettersElement = document.querySelector(".guessed-letters"); 
+//let word = "magnolia";//test word for game setup
 const guessedLetters = []; //array for all guesses - correct and incorrect.
+let remainingGuessess = 8;
 
-// ***WORD ARRAY FOR WORD TO GUESS ***/
-const wordArray = word.toUpperCase().split(''); // split: to return word as array of uppercase letters, see: https://builtin.com/software-engineering-perspectives/split-string-javascript without a separator, the entire string will be treated as one elment in the resulting array, that's why we need ''.
 
-                               //** GAME BEGINS **/
-//function to add placeholders for each letter for before any guesses are made
-const placeholder = function () {
+
+//choose a random word
+
+const getWord = async function(){
+    const response = await fetch('https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt'); 
+    const words = await response.text(); //creates an array of words all attached together like: ability\nable\nabout\nabove\naccept\
+    const wordArray = words.split("\n");//creates a new array of words, separated like so: 'ability', 'able', 'about', 'above', 'accept',
+    const randomIndex = Math.floor(Math.random()* wordArray.length); //finds the length of the wordListArray, and pulls a random index #
+    let word = wordArray[randomIndex].trim(); //grabs one word from wordListArray
+    console.log({word});
+    placeholder(word);
+};    
+// Start Game
+getWord();
+
+// function to add placeholders for each letter for before any guesses are made
+const placeholder = function (word) {
+    const wordArray = word.toUpperCase().split('');
+    console.log({wordArray});
+    const wordInProgress = []; //array to hold circles and correct letters
     for (let letter of wordArray) { //for each letter in the word array
         wordInProgress.push("●"); //add a "●" to the circles array    
     };
-   console.log(wordInProgress);
-    wordInProgressElement.innerText = wordInProgress.join('');//fill inner text of word in progress element w/ placeholder array. Without join('') each letter has a comma, also join() doesn't work, also leaves commas: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join  join() converts all elements of an array to a single string
-    };
-
-placeholder(); //call placeholder function
-
-
-const clearInput = function () {
-    letterInput.value = "";
-    //changes input to blank
-}
+   
+    wordInProgressElement.innerText = wordInProgress.join('');
+};
 
 //guess button to capture whats been entered in the letter input
 guessButton.addEventListener("click", function (e) {
-    e.preventDefault();
+    e.preventDefault(); 
     message.innerText = ''; //empty text of message element
 
-    const usersGuess = letterInput.value.toUpperCase();//captures user's input & capitalizes it
-    const validGuess = validateGuess(usersGuess) //call function w/ input as argument, save the result as variable
-    makeGuess(validGuess); //prevents same letter twice
-    updateWordInProgress(guessedLetters);
-    clearInput(); //clears letter input box
+    const guess = letterInput.value.toUpperCase();//captures user's input & capitalizes it
+    const validGuess = validateGuess(guess) //call function w/ input as argument, save the result as variable
+
+    if (validGuess){ //if guess passes validation
+        makeGuess(guess);// calls makeGues function which checks to see if that letter has already been tried, and if not pushes the letter to the guessedLetters array and updates the guess count.
+    }
+     letterInput.value = ""; //clears the letter input for the user to make another guess
 });
 
-
-//validate player guesses
 const validateGuess = function (input) {
     const acceptedLetter = /[A-Z]/g; //regular expression to make sure input is a letter not symbol or number
 
     //conditional block to test false user input scenarios:
-    if (input.length === 0) { //if input is blank
-        message.innerText = `Please type a guess to play.`;
+    if (input.length === 0) { //if input is empty
+        message.innerText = `Please enter a letter to play.`;
 
-    } else if (input.length > 1) { //if input is more than one character
+    } else if (input.length > 1) { //if input is more than one letter
         message.innerText = `Only one letter at a time, please!`;
 
     } else if (!input.match(acceptedLetter)) {//if input is not a letter
@@ -79,46 +72,76 @@ const validateGuess = function (input) {
     }
 };
 
-const makeGuess = function (letter) {
+const makeGuess = function (guess) {
    
-    if (guessedLetters.includes(letter)) {
+    if (guessedLetters.includes(guess)) {
         message.innerText = `You already tried that one, guess again.`
     } else {
-    guessedLetters.push(letter);
-    guessedLettersElement.innerHTML = ''; 
-    console.log({guessedLetters});
-    
-    let listItem = document.createElement("li");
-    guessedLettersElement.append(listItem);
-    listItem.innerText = (letter);
+    guessedLetters.push(guess);
+    showguessedLetters(); //shows user what they already guessed
+    guessCountdown(guess); //update guess count 
+    updateWordInProgress(guessedLetters);
+    }
+};
+
+const showguessedLetters = function (){
+    guessedLettersElement.innerHTML = ''; //clears the list first
+    for (const letter of guessedLetters){
+        let listItem = document.createElement("li");
+        listItem.innerText = letter;
+        guessedLettersElement.append(listItem);
+    }
     guessedLettersElement.innerText = guessedLetters.join(', ');
     
 };
-};
+
 
 const updateWordInProgress = function (guessedLetters){
-        const revealWord = [];
-        for (const letter of wordArray){ //for each letter of wordArray
+    const wordArray = word.toUpperCase().split('');
+    const revealWord = [];
+    for (const letter of wordArray){ //for each letter of wordArray
         if (guessedLetters.includes(letter)){ //see if guessedLetters array includes letters from word Array
             revealWord.push(letter.toUpperCase()); //if it does, push the letter to revealWord.
         }else {
             revealWord.push('●'); //if it doesn't, push *
         }
        }
-        console.log({revealWord}, {wordArray});
+        
         wordInProgressElement.innerText = revealWord.join(''); //update inner text to revealWord
-        wonTheGame(revealWord);
+        
+        wonTheGame();
 };
 
-const wonTheGame = function(revealWord){ //check to see if their word in progress matches the word to guess
-    
-//     if ( revealWord == wordArray) why doesn't this work?
-if (word.toUpperCase() === wordInProgressElement.innerText){
-message.classList.add("win");
-message.innerHTML = '<p class="highlight">You guessed correct the word! Congrats!</p>';
+const wonTheGame = function(){ //check to see if their word in progress matches the word to guess
+
+    if (word.toUpperCase() === wordInProgressElement.innerText){
+        message.classList.add("win");
+        message.innerHTML = '<p class="highlight">You guessed correct the word! Congrats!</p>';
+//startOver();
+
     }
 };
 
+const guessCountdown = function(guess){ 
+   //make an array with the letters of the word
+   const letterArray = word.toUpperCase().split(); //but I can't access word
+    if (letterArray.includes(guess)){
+        message.innerText = "Good Guess!"
+    }
+    else{
+        message.innerText = `Nope, not that one, try a different letter.`;
+        remainingGuessess = (remainingGuessess - 1);
+        guessCount.innerText = `(${remainingGuessess})`
+    }
+
+    if (remainingGuessess == 1){
+        message.innerText = "You only have one guess left!"
+    }
+    if (remainingGuessess == 0){
+        message.innerText = "Tough luck, try again next time."
+        playAgain.classList.remove("hide");
+    };
+};
 
 
 //if user presses enter instead of button
