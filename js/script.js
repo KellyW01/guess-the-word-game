@@ -4,17 +4,15 @@ const guessedLettersElement = document.querySelector(".guessed-letters"); //show
 const guessButton = document.querySelector(".guess"); //guess button
 const letterInput = document.querySelector(".letter");// where the player enters the letter
 const wordInProgressElement = document.querySelector(".word-in-progress");//hidden word, appears w/ correct guesses
-const guessCount = document.querySelector(".remaining span"); // sentence w/ number of remaining guesses
+const guessCountElement = document.querySelector('.remaining'); // whole sentence of remaining guesses
+const guessCount = document.querySelector(".remaining span"); // number of remaining guesses
 const message = document.querySelector(".message"); //game message
 const playAgain = document.querySelector("button.play-again");
 
 let word = "magnolia";//default word incase API fails
-const guessedLetters = []; //array for all guesses - correct and incorrect.
+let guessedLetters = []; //array for all guesses - correct and incorrect.
 let remainingGuessess = 8;
 
-
-
-//choose a random word
 
 const getWord = async function(){
     const response = await fetch('https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt'); 
@@ -40,8 +38,9 @@ const placeholder = function (word) {
     wordInProgressElement.innerText = wordInProgress.join('');
 };
 
-//guess button to capture whats been entered in the letter input
-guessButton.addEventListener("click", function (e) {
+
+guessButton.addEventListener("click", function (e) {//guess button to capture users input
+
     e.preventDefault(); 
     message.innerText = ''; //empty text of message element
 
@@ -53,8 +52,22 @@ guessButton.addEventListener("click", function (e) {
     }
      letterInput.value = ""; //clears the letter input for the user to make another guess
 });
+playAgain.addEventListener("click", function (e){//starts the game over
+
+    message.classList.remove("win");
+    message.innerText = ''; //empty text of message element
+    guessedLettersElement.innerText = '';
+    guessCountElement.innerText = '';
+    remainingGuessess = 8;
+    guessedLetters = [];
+    guessCount.innerText = remainingGuessess;
+    guessButton.classList.remove("hide");
+    playAgain.classList.add("hide");
+    getWord();
+});
 
 const validateGuess = function (input) {
+
     const acceptedLetter = /[A-Z]/g; //regular expression to make sure input is a letter not symbol or number
 
     //conditional block to test false user input scenarios:
@@ -85,6 +98,7 @@ const makeGuess = function (guess) {
 };
 
 const showguessedLetters = function (){
+
     guessedLettersElement.innerHTML = ''; //clears the list first
     for (const letter of guessedLetters){
         let listItem = document.createElement("li");
@@ -95,8 +109,8 @@ const showguessedLetters = function (){
     
 };
 
-//!! need help here - not sure how to access 'word'
 const updateWordInProgress = function (guessedLetters){
+
     const wordArray = word.toUpperCase().split('');
     const revealWord = [];
     for (const letter of wordArray){ //for each letter of wordArray
@@ -111,20 +125,20 @@ const updateWordInProgress = function (guessedLetters){
         
         wonTheGame();
 };
-//!! same here - can't access 'word'
+
 const wonTheGame = function(){ //check to see if their word in progress matches the word to guess
 
     if (word.toUpperCase() === wordInProgressElement.innerText){
         message.classList.add("win");
         message.innerHTML = '<p class="highlight">You guessed correct the word! Congrats!</p>';
-//startOver();
+        startOver();
 
     }
 };
-//!! same here, can't access 'word'
-const guessCountdown = function(guess){ 
-   //make an array with the letters of the word
-   const letterArray = word.toUpperCase().split(); //but I can't access word
+
+const guessCountdown = function(guess){ //make an array with the letters of the word
+   
+   const letterArray = word.toUpperCase().split(); 
     if (letterArray.includes(guess)){
         message.innerText = "Good Guess!"
     }
@@ -134,30 +148,20 @@ const guessCountdown = function(guess){
         guessCount.innerText = `(${remainingGuessess})`
     }
 
-    if (remainingGuessess == 1){
+    if (remainingGuessess === 1){
         message.innerText = "You only have one guess left!"
     }
-    if (remainingGuessess == 0){
-        message.innerText = "Tough luck, try again next time."
-        playAgain.classList.remove("hide");
+    if (remainingGuessess === 0){
+        message.innerHTML = '<p class="highlight">GAME OVER</p>';
+        guessCountElement.innerText = `Tough luck!  The word was '${word}' want to try again?`;
+        startOver();
     };
 };
+const startOver = function (){ //starts over whether player wins or looses
+    guessButton.classList.add("hide");//hides the guess button
+    playAgain.classList.remove("hide");//shows play again button
+    guessedLettersElement.classList.add("hide"); //hides guessed letters element
+};
+//player can keep playing by pressing enter, which is weird
 
 
-//if user presses enter instead of button
-// letterInput.addEventListener("keydown", function (e) {
-//     const usersGuess = letterInput.value.toUpperCase();
-//     if (e.key === "Enter") {//if user presses the enter key
-//         e.preventDefault();
-//         message.innerText = ''; //empty text of message element - must be before goodGuess for goodGuess to work
-//         const usersGuess = letterInput.value.toUpperCase();//captures user's input
-//         const validGuess = validateGuess(usersGuess) //call function w/ input as argument, save the result as variable
-//         if (validGuess) {
-//             makeGuess(usersGuess);//if it passes validateGuess add to screen and guessedLetters array 
-//             //correctGuess(usersGuess);
-//             console.log(usersGuess);
-//         }
-
-//         clearInput();
-//     }
-// });
