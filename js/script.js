@@ -8,7 +8,7 @@ const guessCount = document.querySelector(".remaining span"); // sentence w/ num
 const message = document.querySelector(".message"); //game message
 const playAgain = document.querySelector("button.play-again");
 
-//let word = "magnolia";//test word for game setup
+let word = "magnolia";//default word incase API fails
 const guessedLetters = []; //array for all guesses - correct and incorrect.
 let remainingGuessess = 8;
 
@@ -21,7 +21,7 @@ const getWord = async function(){
     const words = await response.text(); //creates an array of words all attached together like: ability\nable\nabout\nabove\naccept\
     const wordArray = words.split("\n");//creates a new array of words, separated like so: 'ability', 'able', 'about', 'above', 'accept',
     const randomIndex = Math.floor(Math.random()* wordArray.length); //finds the length of the wordListArray, and pulls a random index #
-    let word = wordArray[randomIndex].trim(); //grabs one word from wordListArray
+    word = wordArray[randomIndex].trim(); //grabs one word from wordListArray
     console.log({word});
     placeholder(word);
 };    
@@ -95,7 +95,7 @@ const showguessedLetters = function (){
     
 };
 
-
+//!! need help here - not sure how to access 'word'
 const updateWordInProgress = function (guessedLetters){
     const wordArray = word.toUpperCase().split('');
     const revealWord = [];
@@ -111,7 +111,7 @@ const updateWordInProgress = function (guessedLetters){
         
         wonTheGame();
 };
-
+//!! same here - can't access 'word'
 const wonTheGame = function(){ //check to see if their word in progress matches the word to guess
 
     if (word.toUpperCase() === wordInProgressElement.innerText){
@@ -121,7 +121,7 @@ const wonTheGame = function(){ //check to see if their word in progress matches 
 
     }
 };
-
+//!! same here, can't access 'word'
 const guessCountdown = function(guess){ 
    //make an array with the letters of the word
    const letterArray = word.toUpperCase().split(); //but I can't access word
