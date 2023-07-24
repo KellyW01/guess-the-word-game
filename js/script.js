@@ -1,5 +1,6 @@
 
                          //*** GLOBAL VARIABLES ***//
+const body = document.querySelector("body");                         
 const guessedLettersElement = document.querySelector(".guessed-letters"); //shows guesssed letters
 const guessButton = document.querySelector(".guess"); //guess button
 const letterInput = document.querySelector(".letter");// where the player enters the letter
@@ -54,12 +55,13 @@ guessButton.addEventListener("click", function (e) {//guess button to capture us
 });
 playAgain.addEventListener("click", function (e){//starts the game over
 
+    body.classList.remove("celebrate");
     message.classList.remove("win");
     message.innerText = ''; //empty text of message element
     guessedLettersElement.innerText = '';
     guessCountElement.innerText = '';
     remainingGuessess = 8;
-    guessedLetters = [];
+    // guessedLetters = [];
     guessCount.innerText = remainingGuessess;
     guessButton.classList.remove("hide");
     playAgain.classList.add("hide");
@@ -123,12 +125,14 @@ const updateWordInProgress = function (guessedLetters){
         
         wordInProgressElement.innerText = revealWord.join(''); //update inner text to revealWord
         
-        wonTheGame();
+        wonTheGame(); //checks to see if word in progress matches the word to guess, see function below
 };
 
 const wonTheGame = function(){ //check to see if their word in progress matches the word to guess
 
     if (word.toUpperCase() === wordInProgressElement.innerText){
+        celebrate();
+        guessCountElement.classList.add("hide");
         message.classList.add("win");
         message.innerHTML = '<p class="highlight">You guessed correct the word! Congrats!</p>';
         startOver();
@@ -161,7 +165,11 @@ const startOver = function (){ //starts over whether player wins or looses
     guessButton.classList.add("hide");//hides the guess button
     playAgain.classList.remove("hide");//shows play again button
     guessedLettersElement.classList.add("hide"); //hides guessed letters element
+    
 };
-//player can keep playing by pressing enter, which is weird
+
+const celebrate = function(){
+    body.classList.add("celebrate")
+}
 
 

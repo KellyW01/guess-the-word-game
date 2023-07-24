@@ -17,6 +17,24 @@ body {
   background-repeat: repeat;
   color: #305050;
 }
+body.celebrate {
+  background: linear-gradient(-45deg, #fbfaf9, #d1faf8, #f9f7f7, rgb(15, 214, 204));
+  background-size: 400% 400%;
+  animation: gradient 6s ease infinite;
+  opacity: 90%;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
 .logo {
   width: 70%;
