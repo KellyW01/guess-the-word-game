@@ -8,7 +8,7 @@ const wordInProgressElement = document.querySelector(".word-in-progress");//hidd
 const guessCountElement = document.querySelector('.remaining'); // whole sentence of remaining guesses
 const guessCount = document.querySelector(".remaining span"); // number of remaining guesses
 const message = document.querySelector(".message"); //game message
-const playAgain = document.querySelector("button.play-again");
+const playAgainButton = document.querySelector("button.play-again");
 
 let word = "magnolia";//default word incase API fails
 let guessedLetters = []; //array for all guesses - correct and incorrect.
@@ -23,6 +23,7 @@ const getWord = async function(){
     word = wordArray[randomIndex].trim(); //grabs one word from wordListArray
     console.log({word});
     placeholder(word);
+    clearBoxes();
 };    
 // Start Game
 getWord();
@@ -39,10 +40,9 @@ const placeholder = function (word) {
     wordInProgressElement.innerText = wordInProgress.join('');
 };
 
-
 guessButton.addEventListener("click", function (e) {//guess button to capture users input
 
-    e.preventDefault(); 
+    e.preventDefault(); //because we're working with a form in index.html
     message.innerText = ''; //empty text of message element
 
     const guess = letterInput.value.toUpperCase();//captures user's input & capitalizes it
@@ -53,20 +53,13 @@ guessButton.addEventListener("click", function (e) {//guess button to capture us
     }
      letterInput.value = ""; //clears the letter input for the user to make another guess
 });
-playAgain.addEventListener("click", function (e){//starts the game over
 
-    body.classList.remove("celebrate");
-    message.classList.remove("win");
-    message.innerText = ''; //empty text of message element
-    guessedLettersElement.innerText = '';
-    guessCountElement.innerText = '';
-    remainingGuessess = 8;
-    // guessedLetters = [];
-    guessCount.innerText = remainingGuessess;
-    guessButton.classList.remove("hide");
-    playAgain.classList.add("hide");
-    getWord();
-});
+
+
+const clearBoxes = function(){
+    guessedLettersElement.innerHTML = '';
+    guessedLetters = [];
+    };
 
 const validateGuess = function (input) {
 
@@ -99,6 +92,8 @@ const makeGuess = function (guess) {
     }
 };
 
+
+
 const showguessedLetters = function (){
 
     guessedLettersElement.innerHTML = ''; //clears the list first
@@ -107,7 +102,7 @@ const showguessedLetters = function (){
         listItem.innerText = letter;
         guessedLettersElement.append(listItem);
     }
-    guessedLettersElement.innerText = guessedLetters.join(', ');
+    guessedLettersElement.innerHTML = guessedLetters.join(', ');
     
 };
 
@@ -126,6 +121,36 @@ const updateWordInProgress = function (guessedLetters){
         wordInProgressElement.innerText = revealWord.join(''); //update inner text to revealWord
         
         wonTheGame(); //checks to see if word in progress matches the word to guess, see function below
+        console.log({wordArray});
+};
+
+
+
+const guessCountdown = function(guess){ //make an array with the letters of the word
+   
+    const wordArray = word.toUpperCase().split('');
+
+    if (wordArray.includes(guess)){ //not working
+        message.innerText = "Good Guess!"
+        // remainingGuessess = remainingGuessess;
+        // guessCount.innerText = `${remainingGuessess}`
+        
+    }
+    else{
+        message.innerText = `Nope, not that one, try a different letter.`;
+        remainingGuessess -= 1;
+        guessCount.innerText = `${remainingGuessess}`
+    }
+
+    if (remainingGuessess === 1){
+        message.innerText = "You only have one guess left!"
+    }
+    if (remainingGuessess === 0){
+        message.innerHTML = '<p class="highlight">GAME OVER</p>';
+        guessCountElement.innerText = `Tough luck!  The word was '${word}' want to try again?`;
+        startOver();
+    };
+    console.log({guess}, {wordArray},);
 };
 
 const wonTheGame = function(){ //check to see if their word in progress matches the word to guess
@@ -140,36 +165,46 @@ const wonTheGame = function(){ //check to see if their word in progress matches 
     }
 };
 
-const guessCountdown = function(guess){ //make an array with the letters of the word
-   
-   const letterArray = word.toUpperCase().split(); 
-    if (letterArray.includes(guess)){
-        message.innerText = "Good Guess!"
-    }
-    else{
-        message.innerText = `Nope, not that one, try a different letter.`;
-        remainingGuessess = (remainingGuessess - 1);
-        guessCount.innerText = `(${remainingGuessess})`
-    }
+const celebrate = function(){
+    body.classList.add("celebrate")
+}
 
-    if (remainingGuessess === 1){
-        message.innerText = "You only have one guess left!"
-    }
-    if (remainingGuessess === 0){
-        message.innerHTML = '<p class="highlight">GAME OVER</p>';
-        guessCountElement.innerText = `Tough luck!  The word was '${word}' want to try again?`;
-        startOver();
-    };
-};
 const startOver = function (){ //starts over whether player wins or looses
     guessButton.classList.add("hide");//hides the guess button
-    playAgain.classList.remove("hide");//shows play again button
+    playAgainButton.classList.remove("hide");//shows play again button
     guessedLettersElement.classList.add("hide"); //hides guessed letters element
     
 };
 
-const celebrate = function(){
-    body.classList.add("celebrate")
-}
+playAgainButton.addEventListener("click", function (e){//starts the game over
+    e.preventDefault(); //because we're working with a form in index.html
+    
+    playAgain();
+    
+    getWord();
+    console.log({remainingGuessess},{guessCount},{guessCountElement})
+});
+
+const playAgain = function (){
+    body.classList.remove("celebrate");
+
+    playAgainButton.classList.add("hide");
+
+    message.classList.remove("win");
+    message.innerText = ''; //empty text of message element
+
+    guessedLettersElement.classList.remove("hide");
+    guessedLettersElement.innerHTML = '';
+
+    guessButton.classList.remove("hide");
+    guessCountElement.classList.remove("hide");
+    console.log(guessCountElement);
+    
+    remainingGuessess = 8;
+    guessCount.innerText = remainingGuessess;
+    letterInput.value = '';
+
+};
+
 
 
