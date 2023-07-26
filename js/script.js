@@ -160,7 +160,7 @@ const wonTheGame = function(){ //check to see if their word in progress matches 
         celebrate();
         guessCountElement.classList.add("hide");
         message.classList.add("win");
-        message.innerHTML = '<p class="highlight">You guessed correct the word! Congrats!</p>';
+        message.innerHTML = '<p class="highlight">You guessed the word! Congrats!</p>';
         startOver();
 
     }
