@@ -97,6 +97,9 @@ h1 {
 .message {
   text-align: center;
 }
+.word-to-guess{
+  text-align: center;
+}
 
 .guess-form {
   display: flex;
